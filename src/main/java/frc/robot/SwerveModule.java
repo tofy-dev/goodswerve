@@ -31,8 +31,8 @@ public class SwerveModule {
       2 * Math.PI; // radians per second squared
 
   private final String m_name;
-  private final MotorController m_driveMotor;
-  private final MotorController m_turningMotor;
+  public final CANSparkMax m_driveMotor;
+  public final CANSparkMax m_turningMotor;
 
   private final RelativeEncoder m_driveEncoder;
   private final RelativeEncoder m_turningEncoder;
@@ -67,10 +67,11 @@ public class SwerveModule {
     m_driveMotor = new CANSparkMax(driveMotorID, CANSparkMaxLowLevel.MotorType.kBrushless);
     m_turningMotor = new CANSparkMax(turnMotorID, CANSparkMaxLowLevel.MotorType.kBrushless);
 
-    m_driveEncoder = ((CANSparkMax)m_driveMotor).getEncoder();
+    m_driveEncoder = m_driveMotor.getEncoder();
+    m_driveEncoder.setPositionConversionFactor(2 * Math.PI * kWheelRadius);
     m_driveEncoder.setVelocityConversionFactor(2 * Math.PI / 60 / kDriveGearRatio * kWheelRadius); // meters per second
 
-    m_turningEncoder = ((CANSparkMax)m_turningMotor).getEncoder();
+    m_turningEncoder = m_turningMotor.getEncoder();
     m_turningMotor.setInverted(true); // TESTING FRONT LEFT
     m_turningEncoder.setPositionConversionFactor(2 * Math.PI / kTurningGearRatio); // degrees (divide by gear ratio)
 

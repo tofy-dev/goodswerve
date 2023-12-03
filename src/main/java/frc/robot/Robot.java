@@ -21,8 +21,10 @@ public class Robot extends TimedRobot {
   private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
 
   private final SendableChooser<String> m_motorChooser = new SendableChooser<>();
+  private final SendableChooser<String> m_motorReversedChooser = new SendableChooser<>();
 
-  String m_autoMotorSelected;
+  String m_motorSelected;
+  String m_reversedSelected;
 
   @Override
   public void robotInit() {
@@ -32,6 +34,10 @@ public class Robot extends TimedRobot {
     m_motorChooser.addOption("Back Left", "BL");
     m_motorChooser.addOption("Back Right", "BR");
     SmartDashboard.putData("MotorChoices", m_motorChooser);
+
+    m_motorReversedChooser.setDefaultOption("No", "NO");
+    m_motorReversedChooser.addOption("Yes", "YES");
+    SmartDashboard.putData("MotorReversed", m_motorReversedChooser);
   }
   
   @Override
@@ -43,8 +49,8 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_swerve.reset();
-    m_autoMotorSelected = m_motorChooser.getSelected();
-    m_swerve.enableMovement(m_autoMotorSelected);
+    m_motorSelected = m_motorChooser.getSelected();
+    m_swerve.enableMovement(m_motorSelected);
   }
 
   @Override
