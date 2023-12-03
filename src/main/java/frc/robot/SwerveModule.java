@@ -127,8 +127,9 @@ public class SwerveModule {
   public void setDesiredState(SwerveModuleState desiredState) {
     // Quit if the swerve module is not able to be run
     if (!a_isRunnable) {
-      m_driveMotor.set(0);
-      m_turningMotor.set(0);
+      // the SETS are PROBABLY extraneous
+      // m_driveMotor.set(0);
+      // m_turningMotor.set(0);
       return;
     }
 
@@ -158,8 +159,6 @@ public class SwerveModule {
 
   public void setRunnable(boolean isRunnable) {
     a_isRunnable = isRunnable;
-    m_driveMotor.set(0);
-    m_turningMotor.set(0);
   }
 
   public boolean getRunnable() {
@@ -167,6 +166,9 @@ public class SwerveModule {
   }
 
   public void reset() {
+    m_driveMotor.set(0);
+    m_turningMotor.set(0);
+
     m_driveEncoder.setPosition(0);
     m_turningEncoder.setPosition(getAbsoluteEncoderRad());
   }

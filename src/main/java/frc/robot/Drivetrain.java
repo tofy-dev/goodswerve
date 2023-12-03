@@ -11,6 +11,8 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.SPI;
 
+import java.lang.reflect.Array;
+
 import com.kauailabs.navx.frc.AHRS;
 
 /** Represents a swerve drive style drivetrain. */
@@ -82,31 +84,20 @@ public class Drivetrain {
         });
   }
 
-  public void disableMovement() {
-    m_frontLeft.setRunnable(false);
-    m_frontRight.setRunnable(false);
-    m_backLeft.setRunnable(false);
-    m_backRight.setRunnable(false);
-  }
-
-  public void enableMovement(String name) {
-    System.out.println(name);
+  // TODO: DELETE THIS LATER
+  public SwerveModule getSwerveMod(String name) {
     switch (name) {
         case "FL":
-            m_frontLeft.setRunnable(true);
-            break;
+            return m_frontLeft;
         case "FR":
-            m_frontRight.setRunnable(true);
-            break;
+            return m_frontRight;
         case "BL":
-            m_backLeft.setRunnable(true);
-            break;
+            return m_backLeft;
         case "BR":
-            m_backRight.setRunnable(true);
-            break;
-        default:
-            System.out.println("Invalid option! " + name);
+            return m_backRight;
     }
+    System.out.println("Invalid option! " + name);
+    return null;
   }
 
   public void reset() {

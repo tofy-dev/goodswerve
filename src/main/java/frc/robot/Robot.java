@@ -20,37 +20,53 @@ public class Robot extends TimedRobot {
   private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(3);
   private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
 
-  private final SendableChooser<String> m_motorChooser = new SendableChooser<>();
-  private final SendableChooser<String> m_motorReversedChooser = new SendableChooser<>();
+  private final SendableChooser<String> m_modChooser = new SendableChooser<>();
+  private final SendableChooser<Boolean> m_driveMotorReversedChooser = new SendableChooser<>();
+  private final SendableChooser<Boolean> m_turnMotorReversedChooser = new SendableChooser<>();
 
-  String m_motorSelected;
-  String m_reversedSelected;
 
   @Override
   public void robotInit() {
-    m_motorChooser.setDefaultOption("None", "NA");
-    m_motorChooser.addOption("Front Left", "FL");
-    m_motorChooser.addOption("Front Right", "FR");
-    m_motorChooser.addOption("Back Left", "BL");
-    m_motorChooser.addOption("Back Right", "BR");
-    SmartDashboard.putData("MotorChoices", m_motorChooser);
+    m_modChooser.setDefaultOption("None", "NA");
+    m_modChooser.addOption("Front Left", "FL");
+    m_modChooser.addOption("Front Right", "FR");
+    m_modChooser.addOption("Back Left", "BL");
+    m_modChooser.addOption("Back Right", "BR");
+    SmartDashboard.putData("modChoices", m_modChooser);
 
-    m_motorReversedChooser.setDefaultOption("No", "NO");
-    m_motorReversedChooser.addOption("Yes", "YES");
-    SmartDashboard.putData("MotorReversed", m_motorReversedChooser);
+    m_driveMotorReversedChooser.setDefaultOption("No", false);
+    m_driveMotorReversedChooser.addOption("Yes", true);
+    SmartDashboard.putData("driveMotorReversed", m_driveMotorReversedChooser);
+
+    m_turnMotorReversedChooser.setDefaultOption("No", false);
+    m_turnMotorReversedChooser.addOption("Yes", true);
+    SmartDashboard.putData("turnMotorReversed", m_turnMotorReversedChooser);
   }
   
-  @Override
-  public void disabledInit() {
-    System.out.println("Disabling...");
-    m_swerve.disableMovement();
-  }
+  // This is probably extraneous
+  // @Override
+  // public void disabledInit() {
+  //   System.out.println("Disabling...");
+  //   disableMovement();
+  // }
+
+
+  // ==========================================================================================================================
+  // AUTONOMOUS CODE
 
   @Override
   public void autonomousInit() {
     m_swerve.reset();
-    m_motorSelected = m_motorChooser.getSelected();
-    m_swerve.enableMovement(m_motorSelected);
+    auto_disableMovement();
+
+    String modSelected = m_modChooser.getSelected();
+    boolean driveMotorReversed = m_driveMotorReversedChooser.getSelected();
+    boolean turnMotorReversed = m_turnMotorReversedChooser.getSelected();
+
+    SwerveModule swerveMod = m_swerve.getSwerveMod(modSelected);
+    swerveMod.setRunnable(true);
+    swerveMod.m_driveMotor.setInverted(driveMotorReversed);
+    swerveMod.m_turningMotor.setInverted(turnMotorReversed);
   }
 
   @Override
@@ -58,6 +74,10 @@ public class Robot extends TimedRobot {
     m_swerve.updateDashboard();
     m_swerve.drive(0.2, 0, 0, false);
   }
+
+
+  // ==========================================================================================================================
+  // TESTING CODE
 
   @Override
   public void testInit() {
@@ -68,6 +88,9 @@ public class Robot extends TimedRobot {
     autonomousPeriodic();
   }
 
+
+  // ==========================================================================================================================
+  // TELEOP CODE
 
   @Override
   public void teleopInit() {
@@ -80,6 +103,10 @@ public class Robot extends TimedRobot {
     // driveWithJoystick(true);
     m_swerve.updateDashboard();
   }
+
+
+  // ==========================================================================================================================
+  // HELPER FUNCTIONS
 
   private void driveWithJoystick(boolean fieldRelative) {
     // Get the x speed. We are inverting this because PS4 controllers return
@@ -105,4 +132,16 @@ public class Robot extends TimedRobot {
 
     m_swerve.drive(xSpeed, ySpeed, rot, fieldRelative);
   }
+
+  public void auto_disableMovement() {
+    m_swerve.getSwerveMod("FL")
+            .setRunnable(false);
+    m_swerve.getSwerveMod("FR")
+            .setRunnable(false);
+    m_swerve.getSwerveMod("BL")
+            .setRunnable(false);
+    m_swerve.getSwerveMod("BR")
+            .setRunnable(false);
+  }
+  // ==========================================================================================================================
 }
